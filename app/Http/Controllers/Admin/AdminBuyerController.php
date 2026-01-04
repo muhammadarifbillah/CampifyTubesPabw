@@ -1,50 +1,138 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Buyer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class AdminBuyerController extends Controller
 {
     public function index()
     {
         $buyers = Buyer::latest()->get();
+        $buyers->each(function (Buyer $buyer) {
+            $attributes = $buyer->getAttributes();
+            if (array_key_exists('is_active', $attributes)) {
+                $buyer->is_active = (bool) $buyer->is_active;
+                return;
+            }
+            if (array_key_exists('status', $attributes)) {
+                $buyer->is_active = ($buyer->status ?? 'active') === 'active';
+                return;
+            }
+            $buyer->is_active = true;
+        });
 
-        return response()->json([
-            'total' => $buyers->count(),
-            'active' => $buyers->where('is_active', 1)->count(),
-            'inactive' => $buyers->where('is_active', 0)->count(),
-            'data' => $buyers
-        ]);
+        $total = $buyers->count();
+        $active = $buyers->where('is_active', true)->count();
+        $totals = [
+            'buyers' => $total,
+            'active_buyers' => $active,
+            'inactive_buyers' => $total - $active,
+        ];
+
+        return view('admin.buyers.index', compact('buyers', 'totals'));
+    }
+
+    public function create()
+    {
+        return view('admin.buyers.create');
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:buyers',
-            'password' => 'required|min:6'
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:buyers,email',
+            'password' => 'required|string|min:6',
+            'role' => 'required|in:buyer,seller,admin',
+            'store_name' => 'nullable|string|max:255',
+            'store_description' => 'nullable|string',
+            'status' => 'nullable|in:active,inactive',
         ]);
 
-        $data['password'] = Hash::make($data['password']);
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+            'store_name' => $validated['store_name'] ?? null,
+            'store_description' => $validated['store_description'] ?? null,
+        ];
+        $data['password'] = Hash::make($validated['password']);
 
-        $buyer = Buyer::create($data);
+        if (Schema::hasColumn('buyers', 'status') && array_key_exists('status', $validated)) {
+            $data['status'] = $validated['status'];
+        }
 
-        return response()->json([
-            'message' => 'Buyer created',
-            'data' => $buyer
-        ], 201);
+        if (Schema::hasColumn('buyers', 'is_active') && array_key_exists('status', $validated)) {
+            $data['is_active'] = $validated['status'] === 'active';
+        }
+
+        Buyer::create($data);
+
+        return redirect()
+            ->route('admin.buyers.index')
+            ->with('success', 'Buyer created');
+    }
+
+    public function show(Buyer $buyer)
+    {
+        return redirect()->route('admin.buyers.edit', $buyer);
+    }
+
+    public function edit(Buyer $buyer)
+    {
+        return view('admin.buyers.edit', compact('buyer'));
+    }
+
+    public function update(Request $request, Buyer $buyer)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:buyers,email,' . $buyer->id,
+            'password' => 'nullable|string|min:6',
+            'role' => 'required|in:buyer,seller,admin',
+            'store_name' => 'nullable|string|max:255',
+            'store_description' => 'nullable|string',
+            'status' => 'nullable|in:active,inactive',
+        ]);
+
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+            'store_name' => $validated['store_name'] ?? null,
+            'store_description' => $validated['store_description'] ?? null,
+        ];
+
+        if (!empty($validated['password'])) {
+            $data['password'] = Hash::make($validated['password']);
+        }
+
+        if (Schema::hasColumn('buyers', 'status') && array_key_exists('status', $validated)) {
+            $data['status'] = $validated['status'];
+        }
+
+        if (Schema::hasColumn('buyers', 'is_active') && array_key_exists('status', $validated)) {
+            $data['is_active'] = $validated['status'] === 'active';
+        }
+
+        $buyer->update($data);
+
+        return redirect()
+            ->route('admin.buyers.index')
+            ->with('success', 'Buyer updated');
     }
 
     public function destroy(Buyer $buyer)
     {
         $buyer->delete();
 
-        return response()->json([
-            'message' => 'Buyer deleted'
-        ]);
+        return redirect()
+            ->route('admin.buyers.index')
+            ->with('success', 'Buyer deleted');
     }
 }

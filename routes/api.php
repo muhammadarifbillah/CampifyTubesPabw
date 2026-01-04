@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AuthApiController;
+use App\Http\Controllers\Api\BuyerApiController;
+use App\Http\Controllers\Api\SellerApiController;
 
-Route::post('/login', [\App\Http\Controllers\Api\AuthApiController::class, 'login']);
-Route::post('/logout', [\App\Http\Controllers\Api\AuthApiController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/login', [AuthApiController::class, 'login']);
+Route::post('/logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum');
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +16,11 @@ Route::post('/logout', [\App\Http\Controllers\Api\AuthApiController::class, 'log
 Route::middleware(['auth:sanctum', 'role:admin'])
     ->prefix('admin')
     ->group(function () {
-        Route::get('/buyers', [\App\Http\Controllers\Api\Admin\AdminBuyerController::class, 'index']);
-        Route::post('/buyers', [\App\Http\Controllers\Api\Admin\AdminBuyerController::class, 'store']);
-        Route::delete('/buyers/{buyer}', [\App\Http\Controllers\Api\Admin\AdminBuyerController::class, 'destroy']);
+        Route::get('/buyers', [BuyerApiController::class, 'index']);
+        Route::get('/buyers/{buyer}', [BuyerApiController::class, 'show']);
+        Route::post('/buyers', [BuyerApiController::class, 'store']);
+        Route::put('/buyers/{buyer}', [BuyerApiController::class, 'update']);
+        Route::delete('/buyers/{buyer}', [BuyerApiController::class, 'destroy']);
     });
 
 /*
@@ -26,6 +30,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 Route::middleware(['auth:sanctum', 'role:seller'])
     ->prefix('seller')
     ->group(function () {
-        Route::get('/profile', [\App\Http\Controllers\Api\Seller\AdminSellerController::class, 'show']);
-        Route::put('/profile', [\App\Http\Controllers\Api\Seller\AdminSellerController::class, 'update']);
+        Route::get('/profile', [SellerApiController::class, 'showProfile']);
+        Route::put('/profile', [SellerApiController::class, 'updateProfile']);
     });
