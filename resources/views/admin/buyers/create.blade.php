@@ -133,19 +133,9 @@
                 <select name="role" required>
                     <option value="buyer">Buyer</option>
                     <option value="seller">Seller</option>
-                    <option value="admin">Admin</option>
                 </select>
             </div>
 
-            <div class="field">
-                <label>Nama Toko</label>
-                <input type="text" name="store_name" placeholder="Optional">
-            </div>
-
-            <div class="field">
-                <label>Deskripsi Toko</label>
-                <textarea name="store_description" placeholder="Optional"></textarea>
-            </div>
 
             <div class="row">
                 <div class="col">

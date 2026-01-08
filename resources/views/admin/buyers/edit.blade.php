@@ -54,16 +54,6 @@
                 </select>
             </div>
 
-            <div class="field">
-                <label>Nama Toko</label>
-                <input type="text" name="store_name" value="{{ old('store_name', $buyer->store_name ?? '') }}" placeholder="Optional">
-            </div>
-
-            <div class="field">
-                <label>Deskripsi Toko</label>
-                <textarea name="store_description" placeholder="Optional">{{ old('store_description', $buyer->store_description ?? '') }}</textarea>
-            </div>
-
             <div class="row">
                 <div class="col">
                     <div class="field">
