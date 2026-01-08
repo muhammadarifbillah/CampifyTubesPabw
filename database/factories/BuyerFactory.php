@@ -24,8 +24,6 @@ class BuyerFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'password' => Hash::make('password'),
             'role' => 'buyer',
-            'store_name' => fake()->optional()->company(),
-            'store_description' => fake()->optional()->sentence(),
         ];
     }
 }

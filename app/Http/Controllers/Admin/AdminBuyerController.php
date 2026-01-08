@@ -49,8 +49,6 @@ class AdminBuyerController extends Controller
             'email' => 'required|email|unique:buyers,email',
             'password' => 'required|string|min:6',
             'role' => 'required|in:buyer,seller,admin',
-            'store_name' => 'nullable|string|max:255',
-            'store_description' => 'nullable|string',
             'status' => 'nullable|in:active,inactive',
         ]);
 
@@ -58,8 +56,6 @@ class AdminBuyerController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'role' => $validated['role'],
-            'store_name' => $validated['store_name'] ?? null,
-            'store_description' => $validated['store_description'] ?? null,
         ];
         $data['password'] = Hash::make($validated['password']);
 
@@ -95,8 +91,6 @@ class AdminBuyerController extends Controller
             'email' => 'required|email|unique:buyers,email,' . $buyer->id,
             'password' => 'nullable|string|min:6',
             'role' => 'required|in:buyer,seller,admin',
-            'store_name' => 'nullable|string|max:255',
-            'store_description' => 'nullable|string',
             'status' => 'nullable|in:active,inactive',
         ]);
 
@@ -104,8 +98,6 @@ class AdminBuyerController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'role' => $validated['role'],
-            'store_name' => $validated['store_name'] ?? null,
-            'store_description' => $validated['store_description'] ?? null,
         ];
 
         if (!empty($validated['password'])) {

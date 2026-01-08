@@ -18,8 +18,6 @@ class Buyer extends Authenticatable
         'email',
         'password',
         'role',
-        'store_name',
-        'store_description',
     ];
 
     protected $hidden = ['password'];

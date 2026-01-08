@@ -13,8 +13,6 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('password');
             $table->string('role')->default('buyer');
-            $table->string('store_name')->nullable();
-            $table->text('store_description')->nullable();
             $table->timestamps();
         });
     }

@@ -26,8 +26,6 @@ class BuyerApiController extends Controller
             'email' => 'required|email|unique:buyers,email',
             'password' => 'required|string|min:8',
             'role' => 'nullable|string|in:buyer',
-            'store_name' => 'nullable|string|max:255',
-            'store_description' => 'nullable|string',
         ]);
 
         $data['password'] = bcrypt($data['password']);
@@ -45,8 +43,6 @@ class BuyerApiController extends Controller
             'email' => 'required|email|unique:buyers,email,' . $buyer->id,
             'password' => 'nullable|string|min:8',
             'role' => 'nullable|string|in:buyer',
-            'store_name' => 'nullable|string|max:255',
-            'store_description' => 'nullable|string',
         ]);
 
         if ($request->filled('password')) {

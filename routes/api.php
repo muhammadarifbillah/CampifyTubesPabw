@@ -21,6 +21,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])
         Route::post('/buyers', [BuyerApiController::class, 'store']);
         Route::put('/buyers/{buyer}', [BuyerApiController::class, 'update']);
         Route::delete('/buyers/{buyer}', [BuyerApiController::class, 'destroy']);
+
+
+        Route::get('/sellers', [SellerApiController::class, 'index']);
+        Route::post('/sellers', [SellerApiController::class, 'store']);
+        Route::put('/sellers/{seller}', [SellerApiController::class, 'update']);
+        Route::delete('/sellers/{seller}', [SellerApiController::class, 'destroy']);
     });
 
 /*

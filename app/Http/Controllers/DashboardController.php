@@ -13,7 +13,7 @@ class DashboardController extends Controller
         $totals = [
             'buyers' => Buyer::count(),
             'sellers' => Seller::count(),
-            'transactions' => 5678, // demo placeholder
+            'transactions' => 5678, 
             'revenue_label' => 'Rp 45.2M'
         ];
 
